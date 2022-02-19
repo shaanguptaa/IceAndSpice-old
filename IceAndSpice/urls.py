@@ -22,4 +22,5 @@ urlpatterns = [
     # path('admin/', include('admin.urls'), name='admin'),
     path('', views.index, name='index'),
     path('menu/', include('Menu.urls'), name='menu'),
+    path('temp', views.temp),
 ]

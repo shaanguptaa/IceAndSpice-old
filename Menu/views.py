@@ -1,17 +1,17 @@
 from django.shortcuts import render
 from Menu.models import Menu
 # Create your views here.
-def menu(request):
-    context = {
-        'menu': {
-            'main': Menu.objects.filter(category__iexact='Main'),
-            'drinks': Menu.objects.filter(category__iexact='Drinks'),
-            'dessert': Menu.objects.filter(category__iexact='Dessert')
-        },
-        'state': "done"
-    }
+# def menu(request):
+#     context = {
+#         'menu': {
+#             'main': Menu.objects.filter(category__iexact='Main'),
+#             'drinks': Menu.objects.filter(category__iexact='Drinks'),
+#             'dessert': Menu.objects.filter(category__iexact='Dessert')
+#         },
+#         'state': "done"
+#     }
 
-    return render(request, 'Menu/menu.html', context=context)
+#     return render(request, 'Menu/menu.html', context=context)
 
 def getmenu(category=[]):
     data = {
