@@ -347,7 +347,8 @@
         </div>
         <div class="container pt-0" style="padding-bottom: 100px; color: #FFF; width: 80%; font-weight: bolder;">
           <div class="row justify-content-md-center">
-            <form action="#book-table" method="POST">
+            <form id="reserve-table-form" method="POST">
+              {% csrf_token %}
                 <div class="row">
                   <div class="col-md">
                     <div class="form-group">
@@ -401,33 +402,13 @@
                     </div>
                   </div>
                 </div>
+
                 <div class="form-group" style="float: right;">
-                  <input type="submit" name="book" class="btn pb_outline-light pb_font-13 pb_letter-spacing-2  p-3 rounded-0" value="Book a Table" id="book" style="margin-top: 30px;">
+                  <input type="submit" name="reserve-btn" class="btn pb_outline-light pb_font-13 pb_letter-spacing-2  p-3 rounded-0" value="Book a Table" id="reserve-btn" style="margin-top: 30px;">
                 </div>
                   
             </form>
           </div>
-          <div id="book-table">
-              {% comment %} <?php
-                if (isset($_POST['book'])) {
-                  $name = $_POST['name'];
-                  $email = $_POST['email'];
-                  $phone = $_POST['phone'];
-                  $date = $_POST['date'];
-                  $time = $_POST['time'];
-                  $person = $_POST['person'];
-
-                  $sql = "INSERT INTO `bookings` VALUES ('$name', '$email', '$phone', '$date', '$time', '$person')";
-
-                  if (!$mysqli -> query($sql)) {
-                    die("Cannot book a table");
-                  }
-                  else {
-                    
-                  }
-                }
-              ?> {% endcomment %}
-            </div>
         </div>
       </div>
       
@@ -630,6 +611,8 @@
     </section>
     <!-- END section -->
 
+    <button id="reservations">Reservations</button>
+
     <footer class="pb_footer bg-light" role="contentinfo">
       <div class="container">
         <div class="row text-center">
@@ -684,6 +667,132 @@
   
 
     <script src="{% static 'js/main.js' %}"></script>
+
+    <script>
+      window.CSRF_TOKEN = "{{ csrf_token }}"
+
+      // AJAX Script for Table Reservation
+      $('#reserve-table-form').submit(function() {
+        console.log("clicked");
+        
+        // $('#book-btn').html('<i class="fas fa-circle-notch fa-spin"></i> Loading...').attr('disabled', 'disabled');
+        $.ajax({
+          type: "POST",
+          url: "reservation/reserve_table/",
+          data: {
+            csrfmiddlewaretoken: window.CSRF_TOKEN,
+            name: $('#reserve-table-form #name').val(),
+            email: $('#reserve-table-form #email').val(),
+            phone: $('#reserve-table-form #phone').val(),
+            date: $('#reserve-table-form #date').val(),
+            time: $('#reserve-table-form #time').val(),
+            persons: $('#reserve-table-form #person').val(),
+            reserve: "True"},
+          datatype: 'json',
+
+          success: function(response) {
+            console.log(response);
+            // var element = $('#load-verify');
+            // if (response.status) {
+            //     $('.load-btn').html('<i class="fas fa-check"></i> Load Dataset').addClass('btn-success').removeClass('btn-secondary').removeClass('btn-danger').removeAttr('disabled');
+            //     // element.html('<i class="fas fa-check"></i> Dataset Loaded Successfully!').addClass('text-success');
+            //     showAlert('load', true);
+            //     animate('.anim-after-load');
+            //     $('#load-data-block .data').html(response.data).find('table').addClass('table table-bordered table-sm table-responsive table-hover').find('tr').css('text-align', 'center');
+            // } else if (!response.status) {
+            //     $('.load-btn').html('<i class="fas fa-times"></i> Load Dataset').addClass('btn-danger').removeClass('btn-secondary').removeClass('btn-success').removeAttr('disabled');
+            //     // element.html('<i class="fas fa-times"></i> Dataset Loading Failed!!').addClass('text-danger');
+            //     $('#load-data-block .data').html();
+            //     showAlert('load', false);
+            // }
+          },
+
+          error: function (jqXHR, exception) {
+            // $('.load-btn').html('<i class="fas fa-times"></i> Load Dataset').addClass('btn-danger').removeClass('btn-secondary').removeClass('btn-success').removeAttr('disabled');
+            // // $('#load-verify').html('<i class="fas fa-times"></i> Dataset Loading Failed!!').addClass('text-danger').parent().addClass('animate').removeClass('d-none');
+            // $('#load-data-block .data').html();
+            // showAlert('load', false)
+          }
+        })
+        return false;
+      });
+
+
+      // set date and time scripts
+
+      // $("#datetime").val(getDate() + "T" + getTime(2)).attr('min', getDate() + "T" + getTime(1))
+
+
+      function getDate(inc = 0) {
+        d = new Date();
+        d.setDate(d.getDate() + inc)
+        return d.toISOString().slice(0, 10);
+      }
+
+      function getTime(inc = 0) {
+        d = new Date();
+        d.setTime(d.getTime() + inc * 60 * 60000);
+        return d.toTimeString().slice(0, 5);
+      }
+
+      const MIN_TIME_DELAY = 1;
+      
+      // setting date input
+      $('#reserve-table-form #date').val(parseInt(getTime(MIN_TIME_DELAY)) < MIN_TIME_DELAY ? getDate(1) : getDate()).attr('min', getDate()).change(function() {
+        if($(this).val() == new Date().toJSON().slice(0, 10)) {
+          $('#reserve-table-form #time').attr('min', getTime(MIN_TIME_DELAY));
+        } else {
+          $('#reserve-table-form #time').removeAttr('min');
+        }
+      });
+      
+      // setting time input
+      $('#reserve-table-form #time').val(getTime(1)).attr('min', getTime(MIN_TIME_DELAY));
+
+
+      $('#reservations').click(function() {
+        $.ajax({
+          type: "POST",
+          url: "reservation/get_reservations/",
+          data: {
+            csrfmiddlewaretoken: window.CSRF_TOKEN,
+            // name: $('#reserve-table-form #name').val(),
+            // email: $('#reserve-table-form #email').val(),
+            // phone: $('#reserve-table-form #phone').val(),
+            // date: $('#reserve-table-form #date').val(),
+            // time: $('#reserve-table-form #time').val(),
+            // persons: $('#reserve-table-form #person').val(),
+            // reserve: "True"
+          },
+          datatype: 'json',
+
+          success: function(response) {
+            console.log(response);
+            // var element = $('#load-verify');
+            // if (response.status) {
+            //     $('.load-btn').html('<i class="fas fa-check"></i> Load Dataset').addClass('btn-success').removeClass('btn-secondary').removeClass('btn-danger').removeAttr('disabled');
+            //     // element.html('<i class="fas fa-check"></i> Dataset Loaded Successfully!').addClass('text-success');
+            //     showAlert('load', true);
+            //     animate('.anim-after-load');
+            //     $('#load-data-block .data').html(response.data).find('table').addClass('table table-bordered table-sm table-responsive table-hover').find('tr').css('text-align', 'center');
+            // } else if (!response.status) {
+            //     $('.load-btn').html('<i class="fas fa-times"></i> Load Dataset').addClass('btn-danger').removeClass('btn-secondary').removeClass('btn-success').removeAttr('disabled');
+            //     // element.html('<i class="fas fa-times"></i> Dataset Loading Failed!!').addClass('text-danger');
+            //     $('#load-data-block .data').html();
+            //     showAlert('load', false);
+            // }
+          },
+
+          error: function (jqXHR, exception) {
+            // $('.load-btn').html('<i class="fas fa-times"></i> Load Dataset').addClass('btn-danger').removeClass('btn-secondary').removeClass('btn-success').removeAttr('disabled');
+            // // $('#load-verify').html('<i class="fas fa-times"></i> Dataset Loading Failed!!').addClass('text-danger').parent().addClass('animate').removeClass('d-none');
+            // $('#load-data-block .data').html();
+            // showAlert('load', false)
+          }
+        })
+      });
+
+    </script>
 
   </body>
 </html>
