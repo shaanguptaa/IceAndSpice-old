@@ -14,11 +14,15 @@ from Menu.models import Menu
 #     return render(request, 'Menu/menu.html', context=context)
 
 def getmenu(category=[]):
+
+    # k = [Menu.objects.values("category")]
+    # print(k)
+
     data = {
         'menu': {
             'main': [item for item in Menu.objects.filter(category='Main').values()] or None,
             'drinks': [x for x in Menu.objects.filter(category__iexact='Drinks').values()] or None,
-            'dessert': Menu.objects.filter(category__iexact='Dessert') or None,
+            'desserts': [x for x in Menu.objects.filter(category__iexact='Desserts').values()] or None,
         },
     }
 

@@ -165,7 +165,7 @@
                             <div class="row justify-content-center">
                               <div class="col-lg-5">
                                 <h3 class="pb_font-18 font-weight-bold">{{item.item_name}}</h3>
-                                <p class="mb-0">{{item.item_desc}}</p>
+                                {% if item.item_desc != "None" %}<p class="mb-0">{{item.item_desc}}</p>{% endif %}
                               </div>
                               <div class="col-lg-2">
                                 <span class="price">&#x20B9; {{item.price}} /-</span>

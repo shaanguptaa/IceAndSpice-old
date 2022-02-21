@@ -5,6 +5,8 @@ from datetime import datetime
 
 # Create your views here.
 def reserve_table(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({})
     if request.method == 'POST' and request.POST['reserve']:
         try:
             name = request.POST['name']
