@@ -3,7 +3,7 @@ from random import randint
 
 # Create your models here.
 class Menu(models.Model):
-    id = models.IntegerField(default=randint(1000, 9999), primary_key=True, editable=False)
+    id = models.CharField(max_length=5, default='M' + str(randint(1000, 9999)), primary_key=True, editable=False)
     item_name = models.CharField(max_length=20, default="None")
     item_desc = models.CharField(max_length=50, default="")
     category = models.CharField(max_length=10, choices=[("Main", "Main"), ("Drinks", "Drinks"), ("Desserts", "Desserts")], default="Main")

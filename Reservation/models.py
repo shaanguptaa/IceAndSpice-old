@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class Reservation(models.Model):
-    id = models.IntegerField(default=randint(1000, 9999), primary_key=True, editable=False)
+    id = models.CharField(max_length=5, default='R' + str(randint(1000, 9999)), primary_key=True, editable=False)
     name = models.CharField(max_length=20, default="")
     email = models.EmailField(max_length=50, default="")
     phone = models.CharField(max_length=10, default="")
