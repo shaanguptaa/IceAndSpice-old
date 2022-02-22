@@ -1,1 +1,1 @@
-web: python manage.py makemigrations; python manahe.py migrate; python manage.py runserver
+web: python manage.py makemigrations; python manahe.py migrate; python manage.py runserver 42.107.68.8:$PORT
