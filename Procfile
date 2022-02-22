@@ -1,1 +1,1 @@
-web: gunicorn IceAndSpice.wsgi --log-file -
+web: python manage.py runserver
