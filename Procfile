@@ -1,1 +1,1 @@
-web: python manage.py runserver
+web: python manage.py makemigrations; python manahe.py migrate; python manage.py runserver
